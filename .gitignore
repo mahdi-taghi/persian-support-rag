@@ -1,0 +1,89 @@
+# --- Repo-specific (existing) ---
+Tabdeal Support Chatbot.pdf
+/Data
+
+# --- Environment & secrets ---
+.env
+.env.*
+!.env.example
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+venv/
+.venv/
+env/
+
+# --- Django ---
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+
+# --- AI / ML artifacts (regenerate با اسکریپت‌ها) ---
+AI/chroma_db/
+AI/embedded_chunks.jsonl
+AI/hybrid_search_results.txt
+AI/search_results.txt
+
+# --- Node / Next.js (monorepo: هم در ریشه هم زیرپوشه‌ها) ---
+node_modules/
+**/node_modules/
+.next/
+**/.next/
+out/
+**/out/
+.npm/
+.npm-cache/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/install-state.gz
+*.tsbuildinfo
+next-env.d.ts
+
+# --- IDE & OS ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- Misc ---
+*.pem
