@@ -11,35 +11,34 @@ interface MessageProps {
 
 export default function Message({ message }: MessageProps) {
   const isUser = message.sender === 'user';
+  const messageTime = message.timestamp.toLocaleTimeString('fa-IR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
       <div
-        className={`max-w-[78%] rounded-2xl border p-4 shadow-sm ${
+        className={`max-w-[82%] rounded-2xl border px-4 py-3 shadow-sm transition ${
           isUser
-            ? 'border-yellow-200/60 bg-yellow-400 text-black'
+            ? 'border-yellow-300/70 bg-gradient-to-br from-yellow-300 to-yellow-400 text-slate-900'
             : message.isHandoff
-            ? 'border-orange-300/40 bg-orange-200/10 text-white'
-            : 'border-white/10 bg-white/5 text-white backdrop-blur'
+            ? 'border-orange-300/45 bg-orange-500/10 text-white backdrop-blur-sm'
+            : 'border-white/15 bg-white/5 text-white backdrop-blur-sm'
         }`}
       >
-        <p className={`text-sm leading-7 ${isUser ? 'text-black' : 'text-white/90'}`}>
+        <p className={`text-sm leading-7 ${isUser ? 'text-slate-900' : 'text-white/90'}`}>
           {message.text}
         </p>
         {message.isHandoff && message.handoffReason && (
-          <div className="mt-2 border-t border-orange-300/30 pt-2">
-            <p className="text-xs text-orange-200">ارجاع: {message.handoffReason}</p>
+          <div className="mt-3 border-t border-orange-300/30 pt-2.5">
+            <p className="text-xs text-orange-100">
+              ارجاع به پشتیبان انسانی: {message.handoffReason}
+            </p>
           </div>
         )}
-        <p
-          className={`text-xs mt-1 ${
-            isUser ? 'text-black/60' : 'text-white/45'
-          }`}
-        >
-          {message.timestamp.toLocaleTimeString('fa-IR', {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
+        <p className={`mt-2 text-[11px] ${isUser ? 'text-slate-800/70' : 'text-white/50'}`}>
+          {messageTime}
         </p>
       </div>
     </div>

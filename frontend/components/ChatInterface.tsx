@@ -96,25 +96,30 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="mx-auto flex h-[640px] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-yellow-300/25 bg-[#0b1120]/95 shadow-[0_0_50px_rgba(244,186,44,.12)]">
-      <div className="border-b border-white/10 bg-gradient-to-r from-[#0f172a] via-[#151d33] to-[#1c243c] p-4 text-white">
-        <div>
-          <h2 className="text-xl font-bold">پشتیبانی تبدیل</h2>
-          <p className="text-sm text-white/70">چت آنلاین</p>
+    <section className="mx-auto flex h-[700px] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-white/15 bg-[#0b1120]/90 shadow-[0_20px_90px_rgba(8,14,30,.65)] backdrop-blur">
+      <header className="border-b border-white/10 bg-gradient-to-r from-[#0f172a] via-[#121b31] to-[#182038] p-5 text-white">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-bold tracking-tight">پشتیبانی تبدیل</h2>
+            <p className="mt-1 text-sm text-white/70">پاسخ‌گویی سریع به سوالات حساب و تراکنش</p>
+          </div>
+          <span className="inline-flex items-center rounded-full border border-emerald-300/30 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-200">
+            آنلاین
+          </span>
         </div>
-      </div>
+      </header>
 
-      <div className="flex-1 space-y-4 overflow-y-auto bg-[#0a0f1d] p-4">
+      <div className="flex-1 space-y-4 overflow-y-auto bg-[#0a0f1d] px-4 py-5 sm:px-5">
         {messages.map((message) => (
           <Message key={message.id} message={message} />
         ))}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-sm backdrop-blur">
-              <div className="flex space-x-2 space-x-reverse">
-                <span className="h-2 w-2 animate-bounce rounded-full bg-yellow-300" />
-                <span className="delay-100 h-2 w-2 animate-bounce rounded-full bg-yellow-300" />
-                <span className="delay-200 h-2 w-2 animate-bounce rounded-full bg-yellow-300" />
+            <div className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 shadow-sm backdrop-blur-sm">
+              <div className="flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-white/70 [animation-delay:0ms]" />
+                <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-white/70 [animation-delay:180ms]" />
+                <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-white/70 [animation-delay:360ms]" />
               </div>
             </div>
           </div>
@@ -122,25 +127,25 @@ export default function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="border-t border-white/10 bg-[#0f1628] p-4">
-        <div className="flex gap-2">
+      <form onSubmit={handleSubmit} className="border-t border-white/10 bg-[#0f1628]/95 p-4 sm:p-5">
+        <div className="flex items-end gap-2">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="پیام…"
-            className="flex-1 rounded-xl border border-white/15 bg-[#0b1120] p-3 text-right text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-yellow-300/70"
+            placeholder="پیام خود را بنویسید..."
+            className="min-h-12 flex-1 rounded-xl border border-white/15 bg-[#0b1120] px-4 py-3 text-right text-white placeholder:text-white/40 outline-none transition focus:border-yellow-300/60 focus:ring-2 focus:ring-yellow-300/40"
             disabled={isLoading}
           />
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="rounded-xl bg-yellow-400 px-6 py-3 font-bold text-black transition hover:bg-yellow-300 disabled:cursor-not-allowed disabled:bg-gray-400"
+            className="min-h-12 rounded-xl bg-yellow-400 px-6 py-3 font-bold text-black transition hover:bg-yellow-300 disabled:cursor-not-allowed disabled:bg-slate-500"
           >
             ارسال
           </button>
         </div>
       </form>
-    </div>
+    </section>
   );
 }
