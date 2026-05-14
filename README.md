@@ -1,106 +1,118 @@
-# Chatbot support stack
+<p align="center">
+  <img src="frontend/public/chart.PNG" alt="AI-powered support chatbot architecture" width="100%" />
+</p>
 
-Minimal Django API + optional Next.js UI. Follow the steps in order.
+# AI-Powered Support Chatbot
 
----
+A production-oriented support chatbot stack built with **Next.js**, **Django REST Framework**, and a **RAG pipeline backed by ChromaDB**. The system provides a Persian RTL chat experience, routes user messages through a validated backend API, retrieves relevant knowledge-base context, and generates concise support answers through an OpenAI-compatible LLM provider.
 
-## What you need installed
+## Flowchart Overview
 
-| Tool             | Why                                 |
-| ---------------- | ----------------------------------- |
-| **Python 3.11+** | Runs the backend and AI code        |
-| **Node.js 20+**  | Only if you use the included web UI |
+The user sends a message from the Next.js chat UI to the Django API. Django validates and logs the request, calls the AI service, and the RAG pipeline applies prompt safety checks, optional tool/human-handoff logic, hybrid retrieval from ChromaDB + BM25, context building, LLM generation, and monitoring signals before returning the final answer to the UI.
 
----
+## Key Features
 
-## 1. Get the code
+- **RTL Persian support UI** built with Next.js and React.
+- **Django + DRF backend** with request validation, response timing, and chat logging.
+- **RAG answer generation** using ChromaDB vector search, BM25 keyword search, and Reciprocal Rank Fusion.
+- **Prompt guardrails** for injection and safety checks before retrieval and generation.
+- **Human handoff detection** for queries that should not be handled automatically.
+- **Tool calling support** for transaction-time related questions.
+- **RAG quality monitoring** stored alongside chat metadata for observability.
+- **Knowledge-base preparation scripts** for scraping, cleaning, chunking, embedding, and ingestion.
 
-```bash
-git clone <your-repo-url>
-cd chatbot-assistant
+## Architecture
+
+| Layer | Responsibility |
+| --- | --- |
+| Frontend | Persian RTL chat interface, message state, loading/error states, and API integration. |
+| Backend | DRF endpoint, serializer validation, AI service orchestration, SQLite chat logs, and admin monitoring. |
+| AI Engine | Prompt guard, time tool, handoff classifier, hybrid retrieval, context builder, LLM call, and quality signals. |
+| Vector Store | Persistent ChromaDB collection containing embedded support-document chunks. |
+| Data Pipeline | Help-center crawling, cleaning, deduplication, smart chunking, embedding generation, and ChromaDB ingestion. |
+
+## Repository Structure
+
+```text
+.
+├── AI/                         # RAG pipeline, guardrails, tools, monitoring, data scripts
+│   ├── chroma_db/              # Persistent ChromaDB vector store
+│   ├── Data/                   # Source and processed knowledge-base files
+│   ├── llm.py                  # Main AI response pipeline
+│   ├── prompt_guard.py         # Prompt safety validation
+│   ├── human_handler.py        # Human handoff classifier
+│   ├── rag_monitor.py          # Retrieval/answer quality signals
+│   └── time_tool.py            # Transaction-time tool logic
+├── backend/                    # Django + DRF API
+│   ├── chat/                   # Chat endpoint, models, serializers, services
+│   └── manage.py
+├── frontend/                   # Next.js chat UI
+│   ├── app/
+│   ├── components/
+│   └── public/chart.PNG        # Architecture diagram used in this README
+├── requirements.txt            # Python dependencies
+└── README.md
 ```
 
----
+## Requirements
 
-## 2. Python environment & packages
+| Tool | Version | Purpose |
+| --- | --- | --- |
+| Python | 3.11+ recommended | Django API and AI pipeline |
+| Node.js | 20+ recommended | Next.js frontend |
+| npm | Latest stable | Frontend dependency management |
 
-From the **project root** (`chatbot-assistant`):
+## Environment Variables
 
-```bash
-python3 -m venv .venv
-```
-
-Activate it:
-
-- **macOS / Linux:** `source .venv/bin/activate`
-- **Windows (cmd):** `.venv\Scripts\activate.bat`
-- **Windows (PowerShell):** `.venv\Scripts\Activate.ps1`
-
-Install dependencies:
-
-```bash
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-_(Only if you use `AI/scrap/` Playwright scripts: run `playwright install` once.)_
-
----
-
-## 3. Configure secrets (`AI/.env`)
-
-Copy the example file and edit it:
+Create the AI environment file:
 
 ```bash
 cp AI/.env.example AI/.env
 ```
 
-Open `AI/.env` and set real values:
+Then configure:
 
-- `METIS_API_KEY` — your API key
-- `METIS_OPENAI_BASE_URL` — OpenAI-compatible base URL
-- `METIS_REST_API_ENDPOINT` — Gemini REST endpoint (used for handoff logic)
+| Variable | Description |
+| --- | --- |
+| `METIS_API_KEY` | API key for the OpenAI-compatible provider. |
+| `METIS_OPENAI_BASE_URL` | Base URL used by the OpenAI SDK client. |
+| `METIS_REST_API_ENDPOINT` | REST endpoint used by the handoff/classification flow. |
 
-Save the file.
+Optional frontend/backend configuration:
 
----
+| Variable | Description |
+| --- | --- |
+| `NEXT_PUBLIC_API_ORIGIN` | Frontend API origin, for example `http://127.0.0.1:8000`. |
+| `DJANGO_CORS_ALLOWED_ORIGINS` | Comma-separated allowed frontend origins for Django CORS. |
 
-## 4. Vector database (required for answers)
+## Backend Setup
 
-The bot reads help articles from **ChromaDB** under `AI/chroma_db/` (collection name: `binance_help_docs`).
+From the repository root:
 
-- If you already have this folder from your team, put it at `AI/chroma_db/` and skip ahead.
-- If you don’t have it, you must build it using your own data pipeline (for example `AI/embed.py` and your JSONL chunks). Without it, the API may error when answering.
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
----
-
-## 5. Database & start the API
-
-All commands below use the **backend** app folder:
+Run the Django API:
 
 ```bash
 cd backend
-```
-
-Create/update the SQLite DB:
-
-```bash
 python manage.py migrate
-```
-
-Start the server:
-
-```bash
 python manage.py runserver
 ```
 
-Leave this terminal open. The API is now at **http://127.0.0.1:8000/**.
+The API will be available at:
 
----
+```text
+http://127.0.0.1:8000/
+```
 
-## 6. web UI (Next.js)
+## Frontend Setup
 
-Open a **second** terminal, project root:
+Open a second terminal from the repository root:
 
 ```bash
 cd frontend
@@ -108,33 +120,92 @@ npm install
 npm run dev
 ```
 
-or
+Open:
 
-```bash
-cd frontend
-npm install
-npm run build
-npm start
+```text
+http://localhost:3000
 ```
 
-Open **http://localhost:3000** in your browser — type a message and press send; the reply appears in the chat window.
-
-If the UI cannot reach the API, set:
+If the frontend cannot reach the backend, set the API origin before starting Next.js:
 
 ```bash
 export NEXT_PUBLIC_API_ORIGIN=http://127.0.0.1:8000
+npm run dev
 ```
 
-(or the equivalent on Windows), then run `npm run dev` again.
+## API Usage
 
----
+Send a chat message to the backend:
 
-## Quick checklist
+```bash
+curl -X POST http://127.0.0.1:8000/api/chat/message/ \
+  -H "Content-Type: application/json" \
+  -d '{"message":"زمان برداشت تومانی چقدر است؟"}'
+```
 
-1. `pip install -r requirements.txt`
-2. Fill `AI/.env`
-3. Ensure `AI/chroma_db/` exists
-4. `cd backend` → `python manage.py migrate` → `python manage.py runserver`
-5. Test with `curl` / PowerShell or open the Next.js app
+Example response shape:
 
-If something fails, read the error in the terminal running `runserver` — it usually says what is missing (env var, Chroma path, etc.).
+```json
+{
+  "question": "زمان برداشت تومانی چقدر است؟",
+  "answer": "...",
+  "handoff_required": false,
+  "handoff_reason": null,
+  "processing_time_ms": 1234
+}
+```
+
+## Vector Database
+
+The answer pipeline expects a persistent ChromaDB database at:
+
+```text
+AI/chroma_db/
+```
+
+with the collection:
+
+```text
+binance_help_docs
+```
+
+If the vector database is missing, build it with the project data-preparation scripts or provide a ready ChromaDB directory before running chat requests.
+
+## Knowledge-Base Pipeline
+
+The included AI scripts support the knowledge-base preparation flow shown in the architecture diagram:
+
+1. Crawl help-center content.
+2. Clean and deduplicate records.
+3. Split content into compact chunks with overlap.
+4. Generate embeddings with `text-embedding-3-small`.
+5. Ingest embedded chunks into ChromaDB.
+
+Relevant scripts live under `AI/`, including `scrap/`, `cleanData.py`, `dropContentDuplicate.py`, `chunck.py`, and `embed.py`.
+
+## Operational Notes
+
+- Chat logs are stored in Django's SQLite database through the `ChatLog` model.
+- Handoff decisions and RAG monitoring metadata are saved with each chat log entry.
+- The default backend CORS configuration allows `localhost:3000` and `127.0.0.1:3000`.
+- The frontend defaults to `http://127.0.0.1:8000/api/chat/message/` in development.
+
+## Quick Start
+
+```bash
+# Backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp AI/.env.example AI/.env
+cd backend
+python manage.py migrate
+python manage.py runserver
+
+# Frontend, in another terminal
+cd frontend
+npm install
+npm run dev
+```
+
+Then visit `http://localhost:3000` and start chatting.
